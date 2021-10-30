@@ -15,12 +15,9 @@ public class GameState : BaseState
         _updateControllers = new List<IUpdate>();
         EventManager.Instance.AddListener(EventType.StartGame, StartGame);
 
-        //_controllers.Add(new WhellController());
-        //_controllers.Add(new BowController());
-        //_controllers.Add(new LevelController());
+        _controllers.Add(new GameSession());
 
-        //_updateControllers.Add(_controllers[0] as IUpdate);
-        //_updateControllers.Add(_controllers[1] as IUpdate);
+        _updateControllers.Add(_controllers[0] as IUpdate);
     }
 
     public override void Enter()

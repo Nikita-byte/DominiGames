@@ -9,8 +9,9 @@ public sealed class ObjectPool
     private GameObject _pool;
 
     private GameObject _camera;
-
+    private GameObject _table;
     private ObjectFactory _objectFactory;
+    private TableFactory _tableFactory;
 
     public static ObjectPool Instance
     {
@@ -27,16 +28,10 @@ public sealed class ObjectPool
     public ObjectPool()
     {
         _objectFactory = new ObjectFactory();
+        _tableFactory = new TableFactory();
         _pool = new GameObject("[Pool]");
         _camera = _objectFactory.Camera;
-
-        //for (int i = 0; i < _countOfArrows; i++)
-        //{
-        //    GameObject go = _objectFactory.Arrow;
-        //    go.transform.SetParent(_pool.transform);
-        //    _arrows.Add(go);
-        //    go.SetActive(false);
-        //}
+        _table = _tableFactory.Table;
     }
 
     public GameObject GetObject(ObjectType objectType)
@@ -47,6 +42,9 @@ public sealed class ObjectPool
         {
             case ObjectType.Camera:
                 go = _camera;
+                break;
+            case ObjectType.Table:
+                go = _table;
                 break;
 
             default:
@@ -68,7 +66,6 @@ public sealed class ObjectPool
         {
             case ObjectType.Camera:
                 break;
-
         }
     }
 

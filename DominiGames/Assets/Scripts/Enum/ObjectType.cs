@@ -9,4 +9,6 @@
     EndGamePanel,
 
     Text,
+    Cell,
+    Table
 }

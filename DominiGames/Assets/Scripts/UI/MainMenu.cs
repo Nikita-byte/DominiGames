@@ -30,10 +30,12 @@ public class MainMenu : BasePanel
     private void PlayAI()
     {
         EventManager.Instance.Events[EventType.StartGame].Invoke();
+        EventManager.Instance.Events[EventType.AIMode].Invoke();
     }
 
     private void PlayPlayers()
     {
         EventManager.Instance.Events[EventType.StartGame].Invoke();
+        EventManager.Instance.Events[EventType.PlayerMode].Invoke();
     }
 }

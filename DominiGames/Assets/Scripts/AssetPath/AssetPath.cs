@@ -12,7 +12,7 @@ public sealed class AssetsPath
                  ObjectType.Canvas, "Canvas"
             },
             {
-                 ObjectType.Sprites, "UI"
+                 ObjectType.Sprites, "Sprites"
             },
             {
                 ObjectType.MainMenu, "UI/MainMenu"
@@ -25,6 +25,12 @@ public sealed class AssetsPath
             },
             {
                 ObjectType.Sound, "Sound"
+            },
+            {
+                ObjectType.Cell, "Cell"
+            },
+            {
+                ObjectType.Table, "Table"
             },
         };
 }

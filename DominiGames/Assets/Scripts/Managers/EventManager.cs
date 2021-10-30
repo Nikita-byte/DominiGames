@@ -37,7 +37,7 @@ public class EventManager
     {
         if (_events.TryGetValue(eventType, out Action value))
         {
-            value -= action;
+            _events[eventType] -= action;
         }
     }
 }
