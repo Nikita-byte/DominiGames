@@ -32,5 +32,8 @@ public sealed class AssetsPath
             {
                 ObjectType.Table, "Table"
             },
+            {
+                ObjectType.Text, "Text"
+            },
         };
 }

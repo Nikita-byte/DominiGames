@@ -16,17 +16,10 @@ public class GameState : BaseState
         EventManager.Instance.AddListener(EventType.StartGame, StartGame);
 
         _controllers.Add(new GameSession());
-
-        _updateControllers.Add(_controllers[0] as IUpdate);
     }
 
     public override void Enter()
     {
-        Screen.orientation = UnityEngine.ScreenOrientation.AutoRotation;
-        Screen.orientation = UnityEngine.ScreenOrientation.Landscape;
-        Screen.autorotateToPortrait = Screen.autorotateToPortraitUpsideDown = false;
-        Screen.autorotateToLandscapeLeft = Screen.autorotateToLandscapeRight = true;
-
         ScreenInterface.Instance.Execute(PanelType.GamePanel);
 
         foreach (ITurnOn controller in _controllers)

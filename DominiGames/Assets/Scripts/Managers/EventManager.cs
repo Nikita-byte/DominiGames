@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
+using UnityEngine;
+
 
 public class EventManager
 {
@@ -10,9 +12,8 @@ public class EventManager
 
     public Action ShakeCamera = delegate { };
 
-    //public Action<ElementType> LVLEvent = delegate { };
-    public Action<int> ScoreEvent = delegate { };
-    public Action<int> ScoreWheelEvent = delegate { };
+    public Action<EnemyType, PlayModeType> GameSessionEvent = delegate { };
+    public Action<Vector2, CellType> ChoseCell = delegate { };
 
     public void Initialize()
     {

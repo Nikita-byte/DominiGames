@@ -13,12 +13,6 @@ public class MainMenuState : BaseState
 
     public override void Enter()
     {
-        Screen.orientation = UnityEngine.ScreenOrientation.AutoRotation;
-        Screen.orientation = UnityEngine.ScreenOrientation.Portrait;
-        Screen.autorotateToPortrait = Screen.autorotateToPortraitUpsideDown = true;
-        Screen.autorotateToLandscapeLeft = Screen.autorotateToLandscapeRight = false;
-
-
         ScreenInterface.Instance.Execute(PanelType.MainMenu);
     }
 

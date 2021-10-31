@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
 
-public class GameSession : ITurnOn, IUpdate
+public class GameSession : ITurnOn
 {
     private Table _table;
-    private IMode _mode;
+    private BaseMode _mode;
 
     public void TurnOn()
     {
@@ -15,39 +15,32 @@ public class GameSession : ITurnOn, IUpdate
 
         _table.TurnOn();
 
-        EventManager.Instance.AddListener(EventType.AIMode, SetAIMode);
-        EventManager.Instance.AddListener(EventType.PlayerMode, SetPlayerMode);
+        EventManager.Instance.GameSessionEvent += SetMode;
     }
 
     public void TurnOff()
     {
         _table.TurnOff();
+        _mode.TurnOff();
 
-        EventManager.Instance.RemoveListener(EventType.AIMode, SetAIMode);
-        EventManager.Instance.RemoveListener(EventType.PlayerMode, SetPlayerMode);
+        EventManager.Instance.GameSessionEvent -= SetMode;
     }
 
-    public void Update()
+    private void SetMode(EnemyType enemyType, PlayModeType playModeType)
     {
-    }
+        switch (playModeType)
+        {
+            case PlayModeType.First:
+                _mode = new FirstMode(_table, enemyType);
+                break;
+            case PlayModeType.Second:
+                _mode = new SecondMode(_table, enemyType);
+                break;
+            case PlayModeType.Third:
+                _mode = new ThirdMode(_table, enemyType);
+                break;
+        }
 
-    public void FixedUpdate()
-    {
-    }
-
-    public void LateUpdate()
-    {
-    }
-
-    private void SetAIMode()
-    {
-        Debug.Log("AI");
-        _mode = new AIMode(_table);
-    }
-
-    private void SetPlayerMode()
-    {
-        Debug.Log("Player");
-        _mode = new PlayerVSPlayerMode(_table);
+        _mode.Start();
     }
 }

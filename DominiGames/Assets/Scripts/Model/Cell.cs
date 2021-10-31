@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 
 public class Cell : MonoBehaviour
@@ -45,6 +44,9 @@ public class Cell : MonoBehaviour
 
     private void OnMouseDown()
     {
-        
+        if (CellType != CellType.None)
+        {
+            EventManager.Instance.ChoseCell.Invoke(_cellPosition, _cellType);
+        }
     }
 }

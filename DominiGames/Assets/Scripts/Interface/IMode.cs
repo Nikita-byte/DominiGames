@@ -2,4 +2,5 @@
 {
     void Start();
     void SwitchTurn();
+    void TurnOff();
 }

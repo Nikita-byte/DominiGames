@@ -7,12 +7,12 @@ public class ScriptOnText : MonoBehaviour
 {
     [SerializeField] private Text _text;
 
-    private float _lifeTime = 0.7f;
+    private float _lifeTime = 2.5f;
     private float _currentTime = 0;
     private bool _isActive;
 
     private float _distanceToMove = 80;
-    private float _duration = 0.7f;
+    private float _duration = 2.5f;
 
     private RectTransform _rectTransform;
     private Color _color;

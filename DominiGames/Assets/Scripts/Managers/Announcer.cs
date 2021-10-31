@@ -23,7 +23,22 @@ public class Announcer
 
         GameObject go = ObjectPool.Instance.GetObject(ObjectType.Text);
         go.transform.SetParent(_canvas.transform);
+        go.SetActive(true);
 
         go.GetComponent<ScriptOnText>().SetText(text, _camera.WorldToScreenPoint(position));
+    }
+
+    public void DisplayText(string text)
+    {
+        if (_canvas == null)
+        {
+            _canvas = GameObject.FindObjectOfType<Canvas>();
+        }
+
+        GameObject go = ObjectPool.Instance.GetObject(ObjectType.Text);
+        go.transform.SetParent(_canvas.transform);
+        go.SetActive(true);
+
+        go.GetComponent<ScriptOnText>().SetText(text, _camera.WorldToScreenPoint(Vector3.up * 3));
     }
 }

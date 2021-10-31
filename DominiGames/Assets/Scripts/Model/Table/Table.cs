@@ -36,9 +36,4 @@ public class Table : MonoBehaviour
             }
         }
     }
-
-    private void SetActiveCell(Vector2 cellPosition)
-    {
-        
-    }
 }

@@ -3,6 +3,4 @@
     StartGame,
     MainMenu,
     EndGame,
-    AIMode,
-    PlayerMode
 }

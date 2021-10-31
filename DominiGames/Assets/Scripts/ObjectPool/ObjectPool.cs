@@ -8,6 +8,9 @@ public sealed class ObjectPool
     private static ObjectPool _objectPool;
     private GameObject _pool;
 
+    private int _countOfText = 20;
+    private Queue<GameObject> _texts;
+
     private GameObject _camera;
     private GameObject _table;
     private ObjectFactory _objectFactory;
@@ -30,8 +33,19 @@ public sealed class ObjectPool
         _objectFactory = new ObjectFactory();
         _tableFactory = new TableFactory();
         _pool = new GameObject("[Pool]");
+        _texts = new Queue<GameObject>();
         _camera = _objectFactory.Camera;
         _table = _tableFactory.Table;
+
+        GameObject go;
+
+        for (int i = 0; i < _countOfText; i++)
+        {
+            go = _objectFactory.Text;
+            go.transform.SetParent(_pool.transform);
+            go.SetActive(false);
+            _texts.Enqueue(go);
+        }
     }
 
     public GameObject GetObject(ObjectType objectType)
@@ -45,6 +59,9 @@ public sealed class ObjectPool
                 break;
             case ObjectType.Table:
                 go = _table;
+                break;
+            case ObjectType.Text:
+                go = _texts.Dequeue(); ;
                 break;
 
             default:
@@ -65,6 +82,9 @@ public sealed class ObjectPool
         switch (objectType)
         {
             case ObjectType.Camera:
+                break;
+            case ObjectType.Text:
+                _texts.Enqueue(gameObject);
                 break;
         }
     }
