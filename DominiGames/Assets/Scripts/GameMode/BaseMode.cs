@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 
-public abstract class BaseMode 
+public abstract class BaseMode : IDisposable
 {
     protected Cell _chosenCell;
     protected Cell _previousCell;
@@ -11,6 +12,7 @@ public abstract class BaseMode
     protected Table _table;
     protected List<Cell> _transparentCells;
     protected List<Cell> _whiteCells;
+    protected string _name;
 
     public BaseMode(Table table, EnemyType enemyType)
     {
@@ -21,23 +23,42 @@ public abstract class BaseMode
         EventManager.Instance.ChoseCell += ProcessCell;
     }
 
-    public abstract void TurnOff();
-    protected abstract void CheckAges();
+    protected abstract void CheckPossibleMoves();
+
+    public void Dispose()
+    {
+        EventManager.Instance.ChoseCell -= ProcessCell;
+    }
 
     public virtual void Start()
     {
         _activePlayer = ActivePlayer.Black;
         CheckWinCondition();
+        _name = PlayerPrefs.GetString("Name", "Black");
 
-        Announcer.Instance.DisplayText("Black Turn");
+        Announcer.Instance.DisplayText(_name + " Turn");
     }
+
+    public virtual void TurnOff()
+    {
+        Dispose();
+        _table = null;
+        _transparentCells.Clear();
+        _whiteCells.Clear();
+    }
+
+    protected virtual bool CheckTableAges(Vector2 cellposition)
+    {
+        return !(cellposition.x < 0 || cellposition.x > 7 || cellposition.y  < 0 || cellposition.y  > 7) ? true : false;
+    }
+
 
     protected virtual void SwitchTurn()
     {
         if (_activePlayer == ActivePlayer.White)
         {
             _activePlayer = ActivePlayer.Black;
-            Announcer.Instance.DisplayText("Black Turn");
+            Announcer.Instance.DisplayText(_name + " Turn");
         }
         else
         {
@@ -62,62 +83,45 @@ public abstract class BaseMode
 
     protected virtual void CheckCell(Vector2 cellPosition)
     {
-        _previousCell = _chosenCell;
-        _chosenCell = _table.Cells[(int)cellPosition.x, (int)cellPosition.y];
-
-        switch (_chosenCell.CellType)
+        if (_table != null)
         {
-            case CellType.None:
-                break;
-            case CellType.Chosen:
-                break;
-            case CellType.Black:
-                if (_activePlayer == ActivePlayer.Black)
-                {
-                    _chosenCell.CellType = CellType.Chosen;
+            _previousCell = _chosenCell;
+            _chosenCell = _table.Cells[(int)cellPosition.x, (int)cellPosition.y];
 
-                    if (_previousCell == null)
+            switch (_chosenCell.CellType)
+            {
+                case CellType.None:
+                    break;
+                case CellType.Chosen:
+                    break;
+                case CellType.Black:
+                case CellType.White:
+                    if (_activePlayer == ActivePlayer.Black && _chosenCell.CellType == CellType.Black ||
+                        _activePlayer == ActivePlayer.White && _chosenCell.CellType == CellType.White)
                     {
-                        _previousCell = _chosenCell;
-                        _previousCell.CellType = CellType.Chosen;
-                    }
-                    else if (_previousCell != null && _previousCell.CellType == CellType.Chosen)
-                    {
-                        _previousCell.CellType = CellType.Black;
-                    }
+                        _chosenCell.CellType = CellType.Chosen;
 
-                    CheckAges();
-                }
-                else
-                {
-                    _chosenCell = _previousCell;
-                }
-                break;
-            case CellType.White:
-                if (_activePlayer == ActivePlayer.White)
-                {
-                    _chosenCell.CellType = CellType.Chosen;
+                        if (_previousCell == null)
+                        {
+                            _previousCell = _chosenCell;
+                            _previousCell.CellType = CellType.Chosen;
+                        }
+                        else if (_previousCell != null && _previousCell.CellType == CellType.Chosen)
+                        {
+                            _previousCell.CellType = _activePlayer == ActivePlayer.Black ? CellType.Black : CellType.White;
+                        }
 
-                    if (_previousCell == null)
-                    {
-                        _previousCell = _chosenCell;
-                        _previousCell.CellType = CellType.Chosen;
+                        CheckPossibleMoves();
                     }
-                    else if (_previousCell != null && _previousCell.CellType == CellType.Chosen)
+                    else
                     {
-                        _previousCell.CellType = CellType.White;
+                        _chosenCell = _previousCell;
                     }
-
-                    CheckAges();
-                }
-                else
-                {
-                    _chosenCell = _previousCell;
-                }
-                break;
-            case CellType.Transparent:
-                MakeTurn();
-                break;
+                    break;
+                case CellType.Transparent:
+                    MakeTurn();
+                    break;
+            }
         }
     }
 
@@ -131,6 +135,7 @@ public abstract class BaseMode
 
         CheckWinCondition();
         SwitchTurn();
+        SoundManager.Instance.PlaySound(SoundType.Turn);
     }
 
     protected virtual void ClearTrasparentCells()
@@ -193,14 +198,7 @@ public abstract class BaseMode
             }
             else if (_transparentCells.Count == 1)
             {
-                if (_chosenCell.CellPosition.x < _transparentCells[0].CellPosition.x || _chosenCell.CellPosition.y > _transparentCells[0].CellPosition.y)
-                {
-                    AIChoseСhecker();
-                }
-                else
-                {
-                    CheckCell(_transparentCells[0].CellPosition);
-                }
+                CheckCell(_transparentCells[0].CellPosition);
             }
             else
             {
@@ -208,12 +206,17 @@ public abstract class BaseMode
 
                 foreach (Cell cell in _transparentCells)
                 {
-                    if (_chosenCell.CellPosition.x < cell.CellPosition.x || _chosenCell.CellPosition.y > cell.CellPosition.y)
+                    if (tempCell == null)
                     {
-                        continue;
+                        tempCell = cell;
                     }
-
-                    tempCell = cell;
+                    else
+                    {
+                        if (cell.CellPosition.x <= tempCell.CellPosition.x && cell.CellPosition.y >= tempCell.CellPosition.y)
+                        {
+                            tempCell = cell;
+                        }
+                    }
                 }
 
                 if (tempCell == null)
@@ -224,17 +227,6 @@ public abstract class BaseMode
                 {
                     CheckCell(tempCell.CellPosition);
                 }
-
-                //do
-                //{
-                //    random = UnityEngine.Random.Range(0, _transparentCells.Count - 1);
-
-                //} while (_chosenCell.CellPosition.x < _transparentCells[random].CellPosition.x || _chosenCell.CellPosition.y > _transparentCells[random].CellPosition.y);
-
-                //if (_chosenCell.CellPosition.x < _transparentCells[random].CellPosition.x || _chosenCell.CellPosition.y > _transparentCells[random].CellPosition.y)
-                //{
-                //    random = UnityEngine.Random.Range(0, _transparentCells.Count - 1);
-                //}
             }
         }
     }
@@ -243,16 +235,19 @@ public abstract class BaseMode
     {
         _whiteCells.Clear();
 
-        foreach (Cell cell in _table.Cells)
+        if (_table != null)
         {
-            if (cell.CellType == CellType.White)
+            foreach (Cell cell in _table.Cells)
             {
-                _whiteCells.Add(cell);
+                if (cell.CellType == CellType.White)
+                {
+                    _whiteCells.Add(cell);
+                }
             }
+
+            int random = UnityEngine.Random.Range(0, _whiteCells.Count);
+
+            CheckCell(_whiteCells[random].CellPosition);
         }
-
-        int random = UnityEngine.Random.Range(0, _whiteCells.Count - 1);
-
-        CheckCell(_whiteCells[random].CellPosition);
     }
 }

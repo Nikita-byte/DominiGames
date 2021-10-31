@@ -11,6 +11,7 @@ public class MainMenu : BasePanel
     [SerializeField] private Button _first;
     [SerializeField] private Button _second;
     [SerializeField] private Button _third;
+    [SerializeField] private InputField _inputField;
 
     private EnemyType _enemytype;
 
@@ -22,6 +23,7 @@ public class MainMenu : BasePanel
         _first.onClick.AddListener(() => FirstMode());
         _second.onClick.AddListener(() => SecondMode());
         _third.onClick.AddListener(() => ThirdMode());
+        _inputField.onEndEdit.AddListener(delegate { SetName(_inputField); });
     }
 
     public override void Hide()
@@ -82,5 +84,10 @@ public class MainMenu : BasePanel
         _first.gameObject.SetActive(true);
         _second.gameObject.SetActive(true);
         _third.gameObject.SetActive(true);
+    }
+
+    private void SetName(InputField input)
+    {
+        PlayerPrefs.SetString("Name", input.text);
     }
 }

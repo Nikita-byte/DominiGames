@@ -99,6 +99,7 @@ MonoBehaviour:
   _first: {fileID: 712887817014268356}
   _second: {fileID: 9080455711228987794}
   _third: {fileID: 7502741413481252302}
+  _inputField: {fileID: 7493679477008895536}
 --- !u!1 &2467300094301608801
 GameObject:
   m_ObjectHideFlags: 0

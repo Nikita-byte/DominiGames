@@ -5,26 +5,9 @@ using System.Collections.Generic;
 
 public class ThirdMode : BaseMode, IDisposable
 {
-    public ThirdMode(Table table, EnemyType enemyType) : base(table, enemyType)
-    {
-        _table = table;
-        _enemyType = enemyType;
-        _transparentCells = new List<Cell>();
-        _whiteCells = new List<Cell>();
-        EventManager.Instance.ChoseCell += ProcessCell;
-    }
+    public ThirdMode(Table table, EnemyType enemyType) : base(table, enemyType) { }
 
-    public void Dispose()
-    {
-        EventManager.Instance.ChoseCell -= ProcessCell;
-    }
-
-    public override void TurnOff()
-    {
-        Dispose();
-    }
-
-    protected override void CheckAges()
+    protected override void CheckPossibleMoves()
     {
         if (_transparentCells.Count != 0)
         {
@@ -37,8 +20,7 @@ public class ThirdMode : BaseMode, IDisposable
             {
                 Vector2 temp = new Vector2(_chosenCell.CellPosition.x + k, _chosenCell.CellPosition.y + i);
 
-                if (!(temp.x  < 0) && !(temp.x  > 7) &&
-                    !(temp.y  < 0) && !(temp.y  > 7))
+                if (CheckTableAges(temp))
                 {
                     if (_table.Cells[(int)temp.x, (int)temp.y].CellType == CellType.None)
                     {
@@ -48,5 +30,7 @@ public class ThirdMode : BaseMode, IDisposable
                 }
             }
         }
+
+        AITurn();
     }
 }
